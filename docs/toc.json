@@ -20,7 +20,7 @@
             "Keypoint regression": "documents/notebooks/keypointregression.ipynb"
         },
         "How-To": {
-            "Use augmentations": "documents/docs/augmentvision.md",
+            "Use augmentations": "documents/docs/howto/augmentvision.md",
             "Presize vision datasets": "notebooks/presizing.ipynb"
         }
     },
