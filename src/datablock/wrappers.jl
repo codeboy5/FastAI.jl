@@ -53,17 +53,17 @@ encodedblock(enc::Encoding, wrapper::WrapperBlock) =
     encodedblock(enc, wrapper, propagatewrapper(wrapper))
 
 function encodedblock(enc::Encoding, wrapper::WrapperBlock, ::PropagateAlways)
-    inner = encodedblock(enc, wrapped(wrapper))
+    inner = encodedblock(enc, parent(wrapper))
     return isnothing(inner) ? nothing : setwrapped(wrapper, inner)
 end
 
 function encodedblock(enc::Encoding, wrapper::WrapperBlock, ::PropagateNever)
-    return encodedblock(enc, wrapped(wrapper))
+    return encodedblock(enc, parent(wrapper))
 end
 
 function encodedblock(enc::Encoding, wrapper::WrapperBlock, ::PropagateSameBlock)
-    inner = encodedblock(enc, wrapped(wrapper))
-    inner == wrapped(wrapper) && return setwrapped(wrapper, inner)
+    inner = encodedblock(enc, parent(wrapper))
+    inner == parent(wrapper) && return setwrapped(wrapper, inner)
     return inner
 end
 
@@ -71,17 +71,17 @@ decodedblock(enc::Encoding, wrapper::WrapperBlock) =
     decodedblock(enc, wrapper, propagatewrapper(wrapper))
 
 function decodedblock(enc::Encoding, wrapper::WrapperBlock, ::PropagateAlways)
-    inner = decodedblock(enc, wrapped(wrapper))
+    inner = decodedblock(enc, parent(wrapper))
     return isnothing(inner) ? nothing : setwrapped(wrapper, inner)
 end
 
 function decodedblock(enc::Encoding, wrapper::WrapperBlock, ::PropagateNever)
-    return decodedblock(enc, wrapped(wrapper))
+    return decodedblock(enc, parent(wrapper))
 end
 
 function decodedblock(enc::Encoding, wrapper::WrapperBlock, ::PropagateSameBlock)
-    inner = decodedblock(enc, wrapped(wrapper))
-    inner == wrapped(block) && return setwrapped(wrapper, inner)
+    inner = decodedblock(enc, parent(wrapper))
+    inner == parent(block) && return setwrapped(wrapper, inner)
     return inner
 end
 
@@ -90,11 +90,11 @@ end
 # to wrapped block.
 
 function encode(enc::Encoding, ctx, wrapper::WrapperBlock, obs; kwargs...)
-    return encode(enc, ctx, wrapped(wrapper), obs; kwargs...)
+    return encode(enc, ctx, parent(wrapper), obs; kwargs...)
 end
 
 function decode(enc::Encoding, ctx, wrapper::WrapperBlock, obs; kwargs...)
-    return decode(enc, ctx, wrapped(wrapper), obs; kwargs...)
+    return decode(enc, ctx, parent(wrapper), obs; kwargs...)
 end
 
 

@@ -86,6 +86,9 @@ _gettfm(tfms, ::Inference) = tfms.inference
 function encodedblock(enc::ProjectiveTransforms{N}, block::Block) where {N}
     return isnothing(blockitemtype(block, N)) ? nothing : Bounded(block, enc.sz)
 end
+function encodedblock(enc::ProjectiveTransforms{N}, block::WrapperBlock) where {N}
+    return isnothing(blockitemtype(block, N)) ? nothing : Bounded(block, enc.sz)
+end
 
 
 function encode(
@@ -98,9 +101,7 @@ function encode(
     ItemType = blockitemtype(block, N)
     isnothing(ItemType) && return obs
     # only init state if block is encoded
-    bounds, randstate =
-        (isnothing(state) || !enc.sharestate) ? encodestate(enc, context, block, obs) :
-        state
+    bounds, randstate = _getstate(enc, state, context, block, obs)
     # don't encode if bounds have wrong dimensionality
     bounds isa DataAugmentation.Bounds{N} || return obs
 
@@ -109,6 +110,20 @@ function encode(
     tobs = apply(tfm, item; randstate = randstate) |> itemdata
     return copy(tobs)
 end
+
+
+encode(enc::ProjectiveTransforms, context,
+        block::WrapperBlock, obs; state = nothing,) =
+    encode(enc, context, wrapped(block), obs;
+        state = _getstate(enc, state, context, block, obs))
+
+
+_getstate(enc, state, context, block, obs) = if (isnothing(state) || !enc.sharestate)
+    encodestate(enc, context, block, obs)
+else
+    state
+end
+
 
 # ProjectiveTransforms is not invertible, hence no `decode` method!
 
